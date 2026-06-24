@@ -511,22 +511,46 @@ var D_UK = [
 
 // ═══════════════════ MIGRATION ═══════════════════
 function migrateData(){
-  // Alte Möbel: raumId → rId
-  var moebel=ld('ms_m',[]); var changed=false;
-  for(var i=0;i<moebel.length;i++){
-    if(moebel[i].raumId && !moebel[i].rId){ moebel[i].rId=moebel[i].raumId; delete moebel[i].raumId; changed=true; }
+  // Alle möglichen alten Schlüsselnamen der V1
+  var ALT_KEYS_R = ['meinschatz_orte','ms_raeume','ms_r'];
+  var ALT_KEYS_M = ['ms_moebel','ms_m'];
+  var ALT_KEYS_I = ['meinschatz_items','ms_items','ms_i'];
+
+  // Räume retten — ersten gefüllten Key nehmen
+  var raeume = [];
+  for(var ri=0;ri<ALT_KEYS_R.length;ri++){
+    var rv = ld(ALT_KEYS_R[ri],[]);
+    if(rv.length){ raeume=rv; break; }
   }
-  if(changed) sv('ms_m',moebel);
-  // Alte Items: moebelId → mId
-  var items=ld('ms_i',[]); var changed2=false;
-  for(var j=0;j<items.length;j++){
-    if(items[j].moebelId && !items[j].mId){ items[j].mId=items[j].moebelId; delete items[j].moebelId; changed2=true; }
-    if(items[j].katId && !items[j].kId){ items[j].kId=items[j].katId; delete items[j].katId; changed2=true; }
-    if(items[j].unterkatId && !items[j].ukId){ items[j].ukId=items[j].unterkatId; delete items[j].unterkatId; changed2=true; }
-    if(items[j].fotoData && !items[j].foto){ items[j].foto=items[j].fotoData; delete items[j].fotoData; changed2=true; }
+  // Räume normalisieren (alte hatten 'name' und 'emoji' — passt schon)
+  sv('ms_r', raeume);
+
+  // Möbel retten
+  var moebel = [];
+  for(var mi=0;mi<ALT_KEYS_M.length;mi++){
+    var mv = ld(ALT_KEYS_M[mi],[]);
+    if(mv.length){ moebel=mv; break; }
   }
-  if(changed2) sv('ms_i',items);
-  // Alte Räume: emoji aus altem Format übernehmen — kein emoji-Feld nötig, schon vorhanden
+  // Möbel-Keys normalisieren
+  for(var m=0;m<moebel.length;m++){
+    if(moebel[m].raumId && !moebel[m].rId){ moebel[m].rId=moebel[m].raumId; }
+  }
+  sv('ms_m', moebel);
+
+  // Items retten
+  var items = [];
+  for(var ii=0;ii<ALT_KEYS_I.length;ii++){
+    var iv = ld(ALT_KEYS_I[ii],[]);
+    if(iv.length){ items=iv; break; }
+  }
+  // Item-Keys normalisieren
+  for(var it=0;it<items.length;it++){
+    if(items[it].moebelId && !items[it].mId)    items[it].mId  = items[it].moebelId;
+    if(items[it].katId    && !items[it].kId)     items[it].kId  = items[it].katId;
+    if(items[it].unterkatId && !items[it].ukId)  items[it].ukId = items[it].unterkatId;
+    if(items[it].fotoData && !items[it].foto)    items[it].foto = items[it].fotoData;
+  }
+  sv('ms_i', items);
 }
 
 // ═══════════════════ STORAGE ═══════════════════
