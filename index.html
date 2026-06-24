@@ -50,11 +50,15 @@ body { background:var(--bg); color:var(--white); font-family:'Outfit',sans-serif
 .psub { font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.65; }
 
 /* GRIDS */
-.g2 { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+@media (min-width:600px) {
+  .g2 { grid-template-columns:repeat(4,1fr); gap:9px; }
+  .g3 { grid-template-columns:repeat(4,1fr); gap:8px; }
+}
 
 /* NAV CARDS */
-.nc { background:var(--card); border-radius:13px; padding:15px 13px; cursor:pointer;
+.nc { background:var(--card); border-radius:13px; padding:13px 11px; cursor:pointer;
   border:1px solid rgba(255,255,255,0.05); transition:transform 0.15s,box-shadow 0.2s,border-color 0.2s;
   position:relative; overflow:hidden; }
 .nc::before { content:''; position:absolute; inset:0;
@@ -62,15 +66,15 @@ body { background:var(--bg); color:var(--white); font-family:'Outfit',sans-serif
   opacity:0; transition:opacity 0.22s; }
 .nc:hover { transform:translateY(-2px); box-shadow:var(--glow); border-color:var(--border); }
 .nc:hover::before { opacity:1; }
-.nc-e { font-size:25px; margin-bottom:7px; }
-.nc-n { font-size:13px; font-weight:600; margin-bottom:2px; }
-.nc-s { font-size:11px; color:var(--grey); }
-.nc-b { position:absolute; top:9px; right:9px; background:rgba(255,45,120,0.15);
-  color:var(--pink); font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; }
+.nc-e { font-size:22px; margin-bottom:6px; }
+.nc-n { font-size:12px; font-weight:600; margin-bottom:2px; line-height:1.3; }
+.nc-s { font-size:10px; color:var(--grey); }
+.nc-b { position:absolute; top:7px; right:7px; background:rgba(255,45,120,0.15);
+  color:var(--pink); font-size:9px; font-weight:700; padding:2px 6px; border-radius:10px; }
 .nc-add { border:1.5px dashed rgba(255,45,120,0.35); background:transparent;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  color:var(--pink); gap:5px; min-height:88px; font-size:12px; font-weight:600; }
-.nc-add .ap { font-size:22px; }
+  color:var(--pink); gap:4px; min-height:80px; font-size:11px; font-weight:600; }
+.nc-add .ap { font-size:20px; }
 
 /* ITEM CARDS */
 .ic { background:var(--card); border-radius:11px; overflow:hidden; cursor:pointer;
@@ -276,6 +280,15 @@ body { background:var(--bg); color:var(--white); font-family:'Outfit',sans-serif
     <div class="ptitle">⚙️ Stammdaten</div>
     <div class="psub">Möbeltypen, Kategorien und Unterkategorien verwalten. Alles hier Angelegte steht überall in der App zur Verfügung.</div>
     <div class="ss">
+      <div class="ss-t">🏠 Raumtypen</div>
+      <div class="sl-list" id="sl-rt"></div>
+      <div class="s-add-row">
+        <input class="fi" id="sa-rte" placeholder="Emoji" style="width:60px;flex:none">
+        <input class="fi" id="sa-rtn" placeholder="z.B. Ankleide, Hobbyraum, Garage...">
+        <button class="s-add-btn" onclick="saAddRt()">+ Hinzufügen</button>
+      </div>
+    </div>
+    <div class="ss">
       <div class="ss-t">🗄️ Möbeltypen</div>
       <div class="sl-list" id="sl-mt"></div>
       <div class="s-add-row">
@@ -313,22 +326,13 @@ body { background:var(--bg); color:var(--white); font-family:'Outfit',sans-serif
 <div class="ov" id="m-raum" onclick="closeOv('m-raum',event)">
   <div class="sh"><div class="sh-h"></div><div class="sh-b">
     <div class="sh-t">🏠 Neuer Raum</div>
-    <div class="fg"><label class="fl">Symbol</label>
-      <div class="eg" id="ep-raum">
-        <div class="ep sel" data-e="🛏️" onclick="epSel('ep-raum',this)">🛏️</div>
-        <div class="ep" data-e="🚪" onclick="epSel('ep-raum',this)">🚪</div>
-        <div class="ep" data-e="🛋️" onclick="epSel('ep-raum',this)">🛋️</div>
-        <div class="ep" data-e="🍽️" onclick="epSel('ep-raum',this)">🍽️</div>
-        <div class="ep" data-e="🚿" onclick="epSel('ep-raum',this)">🚿</div>
-        <div class="ep" data-e="📦" onclick="epSel('ep-raum',this)">📦</div>
-        <div class="ep" data-e="🧺" onclick="epSel('ep-raum',this)">🧺</div>
-        <div class="ep" data-e="🏡" onclick="epSel('ep-raum',this)">🏡</div>
-        <div class="ep" data-e="🌿" onclick="epSel('ep-raum',this)">🌿</div>
-        <div class="ep" data-e="✨" onclick="epSel('ep-raum',this)">✨</div>
-      </div>
+    <div class="fg"><label class="fl">Raumtyp</label>
+      <select class="fs" id="rtyp" onchange="rTypChanged()">
+        <option value="">Bitte wählen...</option>
+      </select>
     </div>
     <div class="fg"><label class="fl">Name des Raums</label>
-      <input class="fi" id="rn" placeholder="z.B. Schlafzimmer, Flur, Keller...">
+      <input class="fi" id="rn" placeholder="z.B. Schlafzimmer Schatzi, Keller links...">
     </div>
     <button class="bp" onclick="saveRaum()">🏠 Raum anlegen</button>
     <button class="bg" onclick="closeOv('m-raum')">Abbrechen</button>
@@ -425,7 +429,24 @@ body { background:var(--bg); color:var(--white); font-family:'Outfit',sans-serif
 
 <script>
 // ═══════════════════ STAMMDATEN DEFAULTS ═══════════════════
-var D_MT = ['Kleiderschrank','Schrank','Wandschrank','Einbauschrank','Kommode',
+var D_RT = [
+  {id:'rt1',e:'🛏️',n:'Schlafzimmer'},
+  {id:'rt2',e:'👗',n:'Ankleide / Ankleidezimmer'},
+  {id:'rt3',e:'🛋️',n:'Wohnzimmer'},
+  {id:'rt4',e:'🍽️',n:'Esszimmer'},
+  {id:'rt5',e:'🍳',n:'Küche'},
+  {id:'rt6',e:'🚿',n:'Badezimmer'},
+  {id:'rt7',e:'🚽',n:'Toilette / WC'},
+  {id:'rt8',e:'🚪',n:'Flur / Diele'},
+  {id:'rt9',e:'📦',n:'Keller'},
+  {id:'rt10',e:'🧺',n:'Hauswirtschaftsraum'},
+  {id:'rt11',e:'🏡',n:'Dachboden'},
+  {id:'rt12',e:'🚗',n:'Garage'},
+  {id:'rt13',e:'🌿',n:'Balkon / Terrasse'},
+  {id:'rt14',e:'💼',n:'Arbeitszimmer'},
+  {id:'rt15',e:'😅',n:'Rumpelkammer'},
+  {id:'rt16',e:'✨',n:'Sonstiges'}
+];
   'Highboard','Sideboard','Schuhschrank','Schuhkipper','Regal',
   'Garderobe','Haken','Truhe','Koffer','Kiste','Vitrine','Schublade'];
 
@@ -491,6 +512,7 @@ var D_UK = [
 // ═══════════════════ STORAGE ═══════════════════
 function ld(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function sv(k,v){localStorage.setItem(k,JSON.stringify(v));}
+function gRT(){return ld('ms_rt',D_RT);} function sRT(d){sv('ms_rt',d);}
 function gR(){return ld('ms_r',[]);}  function sR(d){sv('ms_r',d);}
 function gM(){return ld('ms_m',[]);}  function sM(d){sv('ms_m',d);}
 function gI(){return ld('ms_i',[]);}  function sI(d){sv('ms_i',d);}
@@ -724,7 +746,7 @@ function setStatus(s){
 // ═══════════════════ FAB ═══════════════════
 function fabClick(){
   var v=ST.av;
-  if(v==='raeume'){openOv('m-raum');return;}
+  if(v==='raeume'){fillRTypSel();openOv('m-raum');return;}
   if(v==='moebel'){fillMTSel();openOv('m-moebel');return;}
   openAddItem();
 }
@@ -770,10 +792,23 @@ function fotoSel(e){
 }
 
 // ═══════════════════ SPEICHERN ═══════════════════
+function fillRTypSel(){
+  var rt=gRT(); var s=document.getElementById('rtyp');
+  s.innerHTML='<option value="">Bitte wählen...</option>';
+  for(var i=0;i<rt.length;i++) s.innerHTML+='<option value="'+rt[i].id+'">'+rt[i].e+' '+rt[i].n+'</option>';
+}
+function rTypChanged(){
+  var rt=gRT(); var val=document.getElementById('rtyp').value;
+  var found=null; for(var i=0;i<rt.length;i++) if(rt[i].id===val){found=rt[i];break;}
+  if(found && !document.getElementById('rn').value) document.getElementById('rn').value=found.n;
+}
 function saveRaum(){
   var n=document.getElementById('rn').value.trim(); if(!n){toast('Bitte Namen eingeben');return;}
-  var r=gR(); r.push({id:'r'+Date.now(),name:n,emoji:getEp('ep-raum')}); sR(r);
-  closeOv('m-raum'); document.getElementById('rn').value=''; toast('🏠 '+n+' angelegt'); renderR();
+  var rtId=document.getElementById('rtyp').value; if(!rtId){toast('Bitte Raumtyp wählen');return;}
+  var rt=gRT(); var found=null; for(var i=0;i<rt.length;i++) if(rt[i].id===rtId){found=rt[i];break;}
+  var r=gR(); r.push({id:'r'+Date.now(),name:n,emoji:found?found.e:'🏠',rtId:rtId}); sR(r);
+  closeOv('m-raum'); document.getElementById('rn').value=''; document.getElementById('rtyp').value='';
+  toast('🏠 '+n+' angelegt'); renderR();
 }
 function saveMoebel(){
   var n=document.getElementById('mn').value.trim(); if(!n){toast('Bitte Namen eingeben');return;}
@@ -800,7 +835,16 @@ function saveItem(){
 
 // ═══════════════════ STAMMDATEN ═══════════════════
 function renderSD(){
-  var mt=gMT(); var kats=gK(); var uks=gUK(); var km=mkMap(kats,'id');
+  var rt=gRT(); var mt=gMT(); var kats=gK(); var uks=gUK(); var km=mkMap(kats,'id');
+  // Raumtypen
+  var rl=document.getElementById('sl-rt'); rl.innerHTML='';
+  for(var r=0;r<rt.length;r++){
+    var rtyp=rt[r]; var d0=document.createElement('div');d0.className='sl-i';
+    d0.innerHTML='<div class="sl-il"><span class="sl-e">'+rtyp.e+'</span><span class="sl-n">'+rtyp.n+'</span></div>';
+    var del0=document.createElement('button');del0.className='s-del';del0.textContent='✕';
+    del0.onclick=(function(rid){return function(){var t=gRT();sRT(t.filter(function(x){return x.id!==rid;}));renderSD();};})(rtyp.id);
+    d0.appendChild(del0);rl.appendChild(d0);
+  }
   // Möbeltypen
   var ml=document.getElementById('sl-mt'); ml.innerHTML='';
   for(var i=0;i<mt.length;i++){
@@ -835,6 +879,13 @@ function renderSD(){
   for(var ki=0;ki<kats.length;ki++) ps.innerHTML+='<option value="'+kats[ki].id+'">'+kats[ki].e+' '+kats[ki].name+'</option>';
 }
 
+function saAddRt(){
+  var e=document.getElementById('sa-rte').value.trim()||'🏠';
+  var n=document.getElementById('sa-rtn').value.trim();if(!n)return;
+  var rt=gRT();rt.push({id:'rt'+Date.now(),e:e,n:n});sRT(rt);
+  document.getElementById('sa-rte').value='';document.getElementById('sa-rtn').value='';
+  renderSD();toast(e+' '+n+' hinzugefügt');
+}
 function saAddMt(){var v=document.getElementById('sa-mt').value.trim();if(!v)return;var t=gMT();t.push(v);sMT(t);document.getElementById('sa-mt').value='';renderSD();toast('🗄️ '+v);}
 function saAddKat(){
   var e=document.getElementById('sa-ke').value.trim()||'🏷️';
