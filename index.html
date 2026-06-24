@@ -509,6 +509,26 @@ var D_UK = [
   {id:'u97',k:'festlich',n:'Kostüme'},{id:'u98',k:'festlich',n:'Hochzeitskleidung'}
 ];
 
+// ═══════════════════ MIGRATION ═══════════════════
+function migrateData(){
+  // Alte Möbel: raumId → rId
+  var moebel=ld('ms_m',[]); var changed=false;
+  for(var i=0;i<moebel.length;i++){
+    if(moebel[i].raumId && !moebel[i].rId){ moebel[i].rId=moebel[i].raumId; delete moebel[i].raumId; changed=true; }
+  }
+  if(changed) sv('ms_m',moebel);
+  // Alte Items: moebelId → mId
+  var items=ld('ms_i',[]); var changed2=false;
+  for(var j=0;j<items.length;j++){
+    if(items[j].moebelId && !items[j].mId){ items[j].mId=items[j].moebelId; delete items[j].moebelId; changed2=true; }
+    if(items[j].katId && !items[j].kId){ items[j].kId=items[j].katId; delete items[j].katId; changed2=true; }
+    if(items[j].unterkatId && !items[j].ukId){ items[j].ukId=items[j].unterkatId; delete items[j].unterkatId; changed2=true; }
+    if(items[j].fotoData && !items[j].foto){ items[j].foto=items[j].fotoData; delete items[j].fotoData; changed2=true; }
+  }
+  if(changed2) sv('ms_i',items);
+  // Alte Räume: emoji aus altem Format übernehmen — kein emoji-Feld nötig, schon vorhanden
+}
+
 // ═══════════════════ STORAGE ═══════════════════
 function ld(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function sv(k,v){localStorage.setItem(k,JSON.stringify(v));}
@@ -568,7 +588,12 @@ function navBC(lv){
 function renderR(){
   var raeume=gR(); var moebel=gM(); var items=gI();
   var g=document.getElementById('gr-raeume'); g.innerHTML='';
-  if(!raeume.length) g.innerHTML='<div class="leer"><div class="le">🏠</div><p>Noch keine Räume.<br><strong>Tippe auf +</strong> um zu beginnen.</p></div>';
+  if(!raeume.length){
+    var leer=document.createElement('div'); leer.className='leer';
+    leer.style.gridColumn='1/-1';
+    leer.innerHTML='<div class="le">🏠</div><p>Noch keine Räume.<br><strong>Tippe auf +</strong> um zu beginnen.</p>';
+    g.appendChild(leer);
+  }
   for(var i=0;i<raeume.length;i++){
     var r=raeume[i];
     var mIds=[]; for(var j=0;j<moebel.length;j++) if(moebel[j].rId===r.id) mIds.push(moebel[j].id);
@@ -582,7 +607,7 @@ function renderR(){
   }
   var a=document.createElement('div'); a.className='nc nc-add';
   a.innerHTML='<div class="ap">+</div><div>Raum hinzufügen</div>';
-  a.onclick=function(){openOv('m-raum');}; g.appendChild(a);
+  a.onclick=function(){fillRTypSel();openOv('m-raum');}; g.appendChild(a);
 }
 
 // ═══════════════════ RENDER MÖBEL ═══════════════════
@@ -910,6 +935,7 @@ function mkChip(txt,active,fn){var c=document.createElement('div');c.className='
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2000);}
 
 // INIT
+migrateData();
 renderR();
 </script>
 </body>
