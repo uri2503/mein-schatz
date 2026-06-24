@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mein Schatz 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --leinen:    #0F0F0F;
+    --mokka:     #FFFFFF;
+    --kupfer:    #FF2D78;
+    --karamell:  #1A1A2E;
+    --mahagoni:  #FF2D78;
+    --weiss:     #161625;
+    --gruen:     #FF6B1A;
+    --grau:      #888AAA;
+    --orange:    #FF6B1A;
+    --glow-pink: rgba(255,45,120,0.18);
+    --glow-orng: rgba(255,107,26,0.12);
+  }
+
+  body {
+    background: var(--leinen);
+    color: var(--mokka);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #0F0F0F;
+    border-bottom: 1px solid rgba(255,45,120,0.3);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 24px rgba(255,45,120,0.15);
+  }
+  .header-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #FF2D78, #FF6B1A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.3px;
+  }
+  .header-title span { /* kein extra Stil nötig — Gradient deckt alles */ }
+  .header-actions { display: flex; gap: 10px; }
+  .btn-icon {
+    background: rgba(255,45,120,0.1);
+    border: 1px solid rgba(255,45,120,0.35);
+    color: #FF2D78;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-icon:hover { background: rgba(255,45,120,0.2); }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    display: flex;
+    background: #0F0F0F;
+    border-bottom: 1px solid rgba(255,45,120,0.2);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--grau);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-family: 'Outfit', sans-serif;
+  }
+  .nav-tab.active {
+    border-bottom-color: #FF2D78;
+    color: #FF2D78;
+    font-weight: 600;
+  }
+  .nav-tab:hover { color: #ffffff; }
+
+  /* ── MAIN ── */
+  .main { padding: 20px 16px 80px; max-width: 700px; margin: 0 auto; }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── ORTE (RÄUME) ── */
+  .orte-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .ort-karte {
+    background: var(--weiss);
+    border-radius: 16px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s;
+    border: 1px solid rgba(255,45,120,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .ort-karte::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--glow-pink), var(--glow-orng));
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .ort-karte:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255,45,120,0.25); }
+  .ort-karte:hover::before { opacity: 1; }
+  .ort-emoji { font-size: 28px; margin-bottom: 8px; position: relative; z-index: 1; }
+  .ort-name { font-weight: 600; font-size: 14px; color: #ffffff; margin-bottom: 3px; position: relative; z-index: 1; }
+  .ort-anzahl { font-size: 12px; color: var(--grau); position: relative; z-index: 1; }
+  .ort-karte-add {
+    border: 1.5px dashed rgba(255,45,120,0.4);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #FF2D78;
+    font-size: 13px;
+    gap: 6px;
+    font-weight: 500;
+  }
+  .ort-karte-add .plus { font-size: 28px; line-height: 1; }
+
+  /* ── GALERIE ── */
+  .galerie-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .filter-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,45,120,0.3);
+    background: rgba(255,45,120,0.05);
+    font-size: 12px;
+    color: var(--grau);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+  }
+  .filter-chip.active {
+    background: linear-gradient(90deg, #FF2D78, #FF6B1A);
+    border-color: transparent;
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .galerie-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .item-karte {
+    background: var(--weiss);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .item-karte:hover { transform: scale(1.03); box-shadow: 0 6px 24px rgba(255,45,120,0.2); }
+  .item-foto {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    background: #1A1A2E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+  }
+  .item-foto-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: linear-gradient(145deg, #1A1A2E, #0F0F1A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+  }
+  .item-info { padding: 8px 9px; }
+  .item-name { font-size: 12px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-ort { font-size: 11px; color: var(--grau); }
+  .item-status-badge {
+    position: absolute;
+    top: 6px; right: 6px;
+    font-size: 14px;
+    background: rgba(15,15,15,0.85);
+    border-radius: 50%;
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── ITEM DETAIL MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet {
+    background: #0F0F0F;
+    border: 1px solid rgba(255,45,120,0.2);
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 0 0 32px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: rgba(255,45,120,0.4);
+    border-radius: 2px;
+    margin: 12px auto 0;
+  }
+  .modal-foto {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    margin-top: 12px;
+  }
+  .modal-foto-placeholder {
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(145deg, #1A1A2E, #0F0F1A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    margin-top: 12px;
+  }
+  .modal-body { padding: 20px 20px 0; }
+  .modal-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+  .modal-meta { font-size: 13px; color: var(--grau); margin-bottom: 16px; }
+  .modal-notiz { font-size: 14px; color: #aaaacc; line-height: 1.6; margin-bottom: 20px; font-style: italic; }
+
+  .status-label { font-size: 11px; font-weight: 700; color: var(--grau); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .status-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+  .status-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 12px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: #1A1A2E;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.2s;
+  }
+  .status-btn .emoji { font-size: 20px; display: block; margin-bottom: 4px; }
+  .status-btn .label { font-size: 11px; color: var(--grau); font-weight: 500; }
+  .status-btn.selected {
+    border-color: #FF2D78;
+    background: linear-gradient(135deg, rgba(255,45,120,0.2), rgba(255,107,26,0.15));
+    box-shadow: 0 0 16px rgba(255,45,120,0.2);
+  }
+  .status-btn.selected .label { color: #FF2D78; font-weight: 700; }
+
+  .modal-close {
+    display: block;
+    width: calc(100% - 40px);
+    margin: 0 20px;
+    padding: 14px;
+    background: #1A1A2E;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    color: var(--grau);
+    cursor: pointer;
+  }
+
+  /* ── NEUES ITEM MODAL ── */
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 11px; font-weight: 700; color: var(--grau); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,45,120,0.25);
+    border-radius: 10px;
+    background: #1A1A2E;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input::placeholder, .form-textarea::placeholder { color: #555577; }
+  .form-select option { background: #1A1A2E; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #FF2D78; box-shadow: 0 0 0 3px rgba(255,45,120,0.1); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+
+  .foto-upload-area {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border: 1.5px dashed rgba(255,45,120,0.4);
+    border-radius: 12px;
+    background: #1A1A2E;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .foto-upload-area img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .foto-upload-area .upload-label { font-size: 13px; color: #FF2D78; font-weight: 600; position: relative; z-index: 1; }
+  .foto-upload-area .upload-icon { font-size: 32px; position: relative; z-index: 1; }
+  .foto-upload-area.has-foto .upload-label, .foto-upload-area.has-foto .upload-icon { display: none; }
+  #fotoInput { display: none; }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #FF2D78, #FF6B1A);
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary:hover { background: #7A5235; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── NEUER ORT MODAL ── */
+  .emoji-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .emoji-opt {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    border: 2px solid var(--karamell);
+    background: var(--weiss);
+    font-size: 22px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .emoji-opt.selected { border-color: var(--mahagoni); background: var(--karamell); }
+
+  /* ── SUCHE ── */
+  .suche-input-wrap { position: relative; margin-bottom: 16px; }
+  .suche-input {
+    width: 100%;
+    padding: 12px 14px 12px 40px;
+    border: 1.5px solid var(--karamell);
+    border-radius: 12px;
+    background: var(--weiss);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--mokka);
+    outline: none;
+  }
+  .suche-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; }
+
+  /* ── LEER-ZUSTAND ── */
+  .leer {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--grau);
+  }
+  .leer .leer-emoji { font-size: 48px; margin-bottom: 12px; }
+  .leer p { font-size: 14px; line-height: 1.7; }
+  .leer strong { color: var(--kupfer); }
+
+  /* ── FAB ── */
+  .fab {
+    position: fixed;
+    bottom: 24px; right: 20px;
+    width: 56px; height: 56px;
+    background: var(--mahagoni);
+    color: var(--karamell);
+    border-radius: 50%;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(44,26,14,0.3);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+    z-index: 90;
+  }
+  .fab:hover { transform: scale(1.08); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 90px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--mokka);
+    color: var(--karamell);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 300;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-title">Mein <span>Schatz</span> 💛</div>
+  <div class="header-actions">
+    <button class="btn-icon" onclick="openSuche()">🔍 Suchen</button>
+  </div>
+</header>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <div class="nav-tab active" onclick="showView('orte')">🏠 Meine Räume</div>
+  <div class="nav-tab" onclick="showView('galerie')">👗 Galerie</div>
+  <div class="nav-tab" onclick="showView('entscheiden')">💭 Entscheiden</div>
+  <div class="nav-tab" onclick="showView('suche')">🔍 Suchen</div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- VIEW: ORTE -->
+  <div class="view active" id="view-orte">
+    <p class="section-title">🏠 Deine Räume & Schränke</p>
+    <div class="orte-grid" id="orteGrid">
+      <!-- Orte werden hier gerendert -->
+      <div class="ort-karte ort-karte-add" onclick="openNeuerOrt()">
+        <div class="plus">+</div>
+        <div style="font-size:13px; font-weight:500;">Raum hinzufügen</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: GALERIE -->
+  <div class="view" id="view-galerie">
+    <p class="section-title">👗 Alle Schätze</p>
+    <div class="galerie-filter" id="galerieFilter">
+      <div class="filter-chip active" onclick="filterKategorie('')" data-kat="">Alle</div>
+      <div class="filter-chip" onclick="filterKategorie('blusen')" data-kat="blusen">👚 Blusen</div>
+      <div class="filter-chip" onclick="filterKategorie('hosen')" data-kat="hosen">👖 Hosen</div>
+      <div class="filter-chip" onclick="filterKategorie('kleider')" data-kat="kleider">👗 Kleider</div>
+      <div class="filter-chip" onclick="filterKategorie('jacken')" data-kat="jacken">🧥 Jacken</div>
+      <div class="filter-chip" onclick="filterKategorie('schuhe')" data-kat="schuhe">👠 Schuhe</div>
+      <div class="filter-chip" onclick="filterKategorie('handtaschen')" data-kat="handtaschen">👜 Handtaschen</div>
+      <div class="filter-chip" onclick="filterKategorie('schmuck')" data-kat="schmuck">💍 Schmuck</div>
+      <div class="filter-chip" onclick="filterKategorie('sonstiges')" data-kat="sonstiges">✨ Sonstiges</div>
+    </div>
+    <div class="galerie-grid" id="galerieGrid">
+      <!-- Items hier -->
+    </div>
+  </div>
+
+  <!-- VIEW: ENTSCHEIDEN -->
+  <div class="view" id="view-entscheiden">
+    <p class="section-title">💭 Was passiert damit?</p>
+    <p style="font-size:13px; color:var(--grau); margin-bottom:20px; line-height:1.6;">
+      Kein Stress, kein Muss. Einfach durchblättern und bei jedem Stück fühlen, was richtig ist.
+    </p>
+    <div id="entscheidenListe">
+      <!-- Items ohne Status hier -->
+    </div>
+  </div>
+
+  <!-- VIEW: SUCHE -->
+  <div class="view" id="view-suche">
+    <p class="section-title">🔍 Suchen</p>
+    <div class="suche-input-wrap">
+      <span class="suche-icon">🔍</span>
+      <input class="suche-input" id="sucheInput" type="text" placeholder="z.B. rote Bluse, Handtasche, Keller..." oninput="sucheItems()">
+    </div>
+    <div class="galerie-grid" id="sucheErgebnis"></div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- FAB -->
+<button class="fab" onclick="openNeuesItem()" title="Neues Stück hinzufügen">+</button>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: ITEM DETAIL
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalDetail" onclick="schliessDetail(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="detailFotoWrap"></div>
+    <div class="modal-body">
+      <div class="modal-name" id="detailName"></div>
+      <div class="modal-meta" id="detailMeta"></div>
+      <div class="modal-notiz" id="detailNotiz"></div>
+      <div class="status-label">Was möchtest du damit machen?</div>
+      <div class="status-row" id="detailStatusRow">
+        <button class="status-btn" data-status="behalten" onclick="setzeStatus('behalten')">
+          <span class="emoji">❤️</span><span class="label">Behalten</span>
+        </button>
+        <button class="status-btn" data-status="einlagern" onclick="setzeStatus('einlagern')">
+          <span class="emoji">📦</span><span class="label">Einlagern</span>
+        </button>
+        <button class="status-btn" data-status="weitergeben" onclick="setzeStatus('weitergeben')">
+          <span class="emoji">🎁</span><span class="label">Weitergeben</span>
+        </button>
+        <button class="status-btn" data-status="verkaufen" onclick="setzeStatus('verkaufen')">
+          <span class="emoji">💰</span><span class="label">Verkaufen</span>
+        </button>
+      </div>
+      <button class="modal-close" onclick="schliessDetail()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: NEUES ITEM
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalNeuesItem" onclick="schliessNeuesItem(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div style="font-family:'Playfair Display',serif; font-size:20px; color:var(--mahagoni); margin-bottom:20px;">
+        ✨ Neues Stück
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Foto</label>
+        <div class="foto-upload-area" id="fotoUploadArea" onclick="document.getElementById('fotoInput').click()">
+          <div class="upload-icon">📷</div>
+          <div class="upload-label">Foto aufnehmen oder auswählen</div>
+        </div>
+        <input type="file" id="fotoInput" accept="image/*" capture="environment" onchange="fotoGewaehlt(event)">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Bezeichnung</label>
+        <input class="form-input" id="inputName" type="text" placeholder="z.B. Rote Seidenbluse, Braune Handtasche...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kategorie</label>
+        <select class="form-select" id="inputKategorie">
+          <option value="">Bitte wählen...</option>
+          <option value="blusen">👚 Blusen</option>
+          <option value="hosen">👖 Hosen</option>
+          <option value="kleider">👗 Kleider</option>
+          <option value="jacken">🧥 Jacken</option>
+          <option value="schuhe">👠 Schuhe</option>
+          <option value="handtaschen">👜 Handtaschen</option>
+          <option value="schmuck">💍 Schmuck</option>
+          <option value="sonstiges">✨ Sonstiges</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Verwahrort (Schrank/Raum)</label>
+        <select class="form-select" id="inputOrt">
+          <option value="">Bitte wählen...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notiz (optional)</label>
+        <textarea class="form-textarea" id="inputNotiz" placeholder="z.B. Zum Abendkleid passend, von Mama bekommen..."></textarea>
+      </div>
+
+      <button class="btn-primary" id="btnSpeichern" onclick="speichereItem()">💛 Speichern</button>
+      <button class="modal-close" style="margin-top:10px;" onclick="schliessNeuesItem()">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: NEUER ORT
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalNeuerOrt" onclick="schliessNeuerOrt(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div style="font-family:'Playfair Display',serif; font-size:20px; color:var(--mahagoni); margin-bottom:20px;">
+        🏠 Neuer Raum / Schrank
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Symbol wählen</label>
+        <div class="emoji-picker" id="emojiPicker">
+          <div class="emoji-opt selected" data-emoji="🚪" onclick="waehleEmoji(this)">🚪</div>
+          <div class="emoji-opt" data-emoji="👗" onclick="waehleEmoji(this)">👗</div>
+          <div class="emoji-opt" data-emoji="👟" onclick="waehleEmoji(this)">👟</div>
+          <div class="emoji-opt" data-emoji="🧳" onclick="waehleEmoji(this)">🧳</div>
+          <div class="emoji-opt" data-emoji="📦" onclick="waehleEmoji(this)">📦</div>
+          <div class="emoji-opt" data-emoji="🛋️" onclick="waehleEmoji(this)">🛋️</div>
+          <div class="emoji-opt" data-emoji="🛏️" onclick="waehleEmoji(this)">🛏️</div>
+          <div class="emoji-opt" data-emoji="🪑" onclick="waehleEmoji(this)">🪑</div>
+          <div class="emoji-opt" data-emoji="💍" onclick="waehleEmoji(this)">💍</div>
+          <div class="emoji-opt" data-emoji="🌸" onclick="waehleEmoji(this)">🌸</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Name des Raums</label>
+        <input class="form-input" id="inputOrtName" type="text" placeholder="z.B. Schrank links, Schrank AZ, Keller...">
+      </div>
+
+      <button class="btn-primary" onclick="speichereOrt()">🏠 Raum anlegen</button>
+      <button class="modal-close" style="margin-top:10px;" onclick="schliessNeuerOrt()">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ══════════════════════════════════════════════════
+// DATEN (localStorage — später Supabase)
+// ══════════════════════════════════════════════════
+
+var ORTE_KEY = 'meinschatz_orte';
+var ITEMS_KEY = 'meinschatz_items';
+
+function ladeOrte() {
+  try { return JSON.parse(localStorage.getItem(ORTE_KEY)) || []; }
+  catch(e) { return []; }
+}
+function speichereOrteLS(orte) {
+  localStorage.setItem(ORTE_KEY, JSON.stringify(orte));
+}
+function ladeItems() {
+  try { return JSON.parse(localStorage.getItem(ITEMS_KEY)) || []; }
+  catch(e) { return []; }
+}
+function speichereItemsLS(items) {
+  localStorage.setItem(ITEMS_KEY, JSON.stringify(items));
+}
+
+// ══════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════
+
+function showView(name) {
+  var views = document.querySelectorAll('.view');
+  for (var i = 0; i < views.length; i++) {
+    views[i].classList.remove('active');
+  }
+  document.getElementById('view-' + name).classList.add('active');
+
+  var tabs = document.querySelectorAll('.nav-tab');
+  var names = ['orte', 'galerie', 'entscheiden', 'suche'];
+  for (var j = 0; j < tabs.length; j++) {
+    if (names[j] === name) {
+      tabs[j].classList.add('active');
+    } else {
+      tabs[j].classList.remove('active');
+    }
+  }
+
+  if (name === 'galerie') renderGalerie('');
+  if (name === 'entscheiden') renderEntscheiden();
+  if (name === 'suche') { document.getElementById('sucheInput').value = ''; document.getElementById('sucheErgebnis').innerHTML = ''; }
+}
+
+function openSuche() { showView('suche'); document.getElementById('sucheInput').focus(); }
+
+// ══════════════════════════════════════════════════
+// ORTE RENDERN
+// ══════════════════════════════════════════════════
+
+function renderOrte() {
+  var orte = ladeOrte();
+  var items = ladeItems();
+  var grid = document.getElementById('orteGrid');
+  grid.innerHTML = '';
+
+  for (var i = 0; i < orte.length; i++) {
+    var ort = orte[i];
+    var anzahl = 0;
+    for (var j = 0; j < items.length; j++) {
+      if (items[j].ortId === ort.id) anzahl++;
+    }
+    var div = document.createElement('div');
+    div.className = 'ort-karte';
+    div.setAttribute('data-id', ort.id);
+    div.innerHTML = '<div class="ort-emoji">' + ort.emoji + '</div>' +
+                    '<div class="ort-name">' + ort.name + '</div>' +
+                    '<div class="ort-anzahl">' + anzahl + ' Stück' + (anzahl === 1 ? '' : 'e') + '</div>';
+    div.onclick = (function(ortId, ortName) {
+      return function() { oeffneOrt(ortId, ortName); };
+    })(ort.id, ort.name);
+    grid.appendChild(div);
+  }
+
+  var addBtn = document.createElement('div');
+  addBtn.className = 'ort-karte ort-karte-add';
+  addBtn.onclick = openNeuerOrt;
+  addBtn.innerHTML = '<div class="plus">+</div><div style="font-size:13px;font-weight:500;">Raum hinzufügen</div>';
+  grid.appendChild(addBtn);
+}
+
+function oeffneOrt(ortId, ortName) {
+  // Galerie gefiltert nach Ort
+  showView('galerie');
+  renderGalerieNachOrt(ortId, ortName);
+}
+
+// ══════════════════════════════════════════════════
+// GALERIE
+// ══════════════════════════════════════════════════
+
+var aktuelleKategorie = '';
+
+function filterKategorie(kat) {
+  aktuelleKategorie = kat;
+  var chips = document.querySelectorAll('.filter-chip');
+  for (var i = 0; i < chips.length; i++) {
+    if (chips[i].getAttribute('data-kat') === kat) {
+      chips[i].classList.add('active');
+    } else {
+      chips[i].classList.remove('active');
+    }
+  }
+  renderGalerie(kat);
+}
+
+function renderGalerie(kat) {
+  var items = ladeItems();
+  var gefiltert = [];
+  for (var i = 0; i < items.length; i++) {
+    if (!kat || items[i].kategorie === kat) gefiltert.push(items[i]);
+  }
+  renderItemsInGrid(gefiltert, document.getElementById('galerieGrid'));
+}
+
+function renderGalerieNachOrt(ortId, ortName) {
+  // Alle Chips deaktivieren
+  var chips = document.querySelectorAll('.filter-chip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('active');
+
+  var items = ladeItems();
+  var gefiltert = [];
+  for (var j = 0; j < items.length; j++) {
+    if (items[j].ortId === ortId) gefiltert.push(items[j]);
+  }
+  var orte = ladeOrte();
+  var ort = null;
+  for (var k = 0; k < orte.length; k++) {
+    if (orte[k].id === ortId) { ort = orte[k]; break; }
+  }
+
+  var titel = document.querySelector('#view-galerie .section-title');
+  titel.textContent = (ort ? ort.emoji + ' ' : '') + ortName;
+  renderItemsInGrid(gefiltert, document.getElementById('galerieGrid'));
+}
+
+var STATUS_EMOJI = { behalten: '❤️', einlagern: '📦', weitergeben: '🎁', verkaufen: '💰' };
+var KAT_EMOJI    = { blusen:'👚', hosen:'👖', kleider:'👗', jacken:'🧥', schuhe:'👠', handtaschen:'👜', schmuck:'💍', sonstiges:'✨' };
+
+function renderItemsInGrid(items, grid) {
+  grid.innerHTML = '';
+  if (items.length === 0) {
+    grid.innerHTML = '<div class="leer" style="grid-column:1/-1"><div class="leer-emoji">🌸</div><p>Noch nichts hier.<br><strong>Tippe auf +</strong> um das erste Stück hinzuzufügen.</p></div>';
+    return;
+  }
+  var orte = ladeOrte();
+  var orteMap = {};
+  for (var k = 0; k < orte.length; k++) orteMap[orte[k].id] = orte[k];
+
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var ort = orteMap[item.ortId];
+    var karte = document.createElement('div');
+    karte.className = 'item-karte';
+
+    var fotoHtml = '';
+    if (item.fotoData) {
+      fotoHtml = '<img src="' + item.fotoData + '" style="width:100%;aspect-ratio:3/4;object-fit:cover;" loading="lazy">';
+    } else {
+      fotoHtml = '<div class="item-foto-placeholder">' + (KAT_EMOJI[item.kategorie] || '✨') + '</div>';
+    }
+
+    var statusBadge = item.status ? '<div class="item-status-badge">' + STATUS_EMOJI[item.status] + '</div>' : '';
+
+    karte.innerHTML = fotoHtml + statusBadge +
+      '<div class="item-info">' +
+        '<div class="item-name">' + item.name + '</div>' +
+        '<div class="item-ort">' + (ort ? ort.emoji + ' ' + ort.name : '') + '</div>' +
+      '</div>';
+
+    karte.onclick = (function(it) {
+      return function() { oeffneDetail(it.id); };
+    })(item);
+    grid.appendChild(karte);
+  }
+}
+
+// ══════════════════════════════════════════════════
+// ENTSCHEIDEN VIEW
+// ══════════════════════════════════════════════════
+
+function renderEntscheiden() {
+  var items = ladeItems();
+  var ohneStatus = [];
+  for (var i = 0; i < items.length; i++) {
+    if (!items[i].status) ohneStatus.push(items[i]);
+  }
+  var liste = document.getElementById('entscheidenListe');
+  if (ohneStatus.length === 0) {
+    liste.innerHTML = '<div class="leer"><div class="leer-emoji">🎉</div><p>Wunderbar!<br>Du hast für alle Stücke eine Entscheidung getroffen.</p></div>';
+    return;
+  }
+  var grid = document.createElement('div');
+  grid.className = 'galerie-grid';
+  renderItemsInGrid(ohneStatus, grid);
+  liste.innerHTML = '<p style="font-size:12px;color:var(--grau);margin-bottom:12px;">' + ohneStatus.length + ' Stück' + (ohneStatus.length === 1 ? '' : 'e') + ' warten auf deine Entscheidung</p>';
+  liste.appendChild(grid);
+}
+
+// ══════════════════════════════════════════════════
+// SUCHE
+// ══════════════════════════════════════════════════
+
+function sucheItems() {
+  var q = document.getElementById('sucheInput').value.toLowerCase().trim();
+  if (!q) { document.getElementById('sucheErgebnis').innerHTML = ''; return; }
+  var items = ladeItems();
+  var orte = ladeOrte();
+  var orteMap = {};
+  for (var k = 0; k < orte.length; k++) orteMap[orte[k].id] = orte[k];
+
+  var treffer = [];
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var ort = orteMap[item.ortId];
+    var haystack = (item.name + ' ' + item.kategorie + ' ' + item.notiz + ' ' + (ort ? ort.name : '')).toLowerCase();
+    if (haystack.indexOf(q) !== -1) treffer.push(item);
+  }
+  renderItemsInGrid(treffer, document.getElementById('sucheErgebnis'));
+}
+
+// ══════════════════════════════════════════════════
+// DETAIL MODAL
+// ══════════════════════════════════════════════════
+
+var aktivesItemId = null;
+
+function oeffneDetail(itemId) {
+  var items = ladeItems();
+  var orte = ladeOrte();
+  var orteMap = {};
+  for (var k = 0; k < orte.length; k++) orteMap[orte[k].id] = orte[k];
+
+  var item = null;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].id === itemId) { item = items[i]; break; }
+  }
+  if (!item) return;
+
+  aktivesItemId = itemId;
+  var ort = orteMap[item.ortId];
+
+  // Foto
+  var fotoWrap = document.getElementById('detailFotoWrap');
+  if (item.fotoData) {
+    fotoWrap.innerHTML = '<img class="modal-foto" src="' + item.fotoData + '">';
+  } else {
+    fotoWrap.innerHTML = '<div class="modal-foto-placeholder">' + (KAT_EMOJI[item.kategorie] || '✨') + '</div>';
+  }
+
+  document.getElementById('detailName').textContent = item.name;
+  document.getElementById('detailMeta').textContent =
+    (KAT_EMOJI[item.kategorie] || '') + ' ' + (item.kategorie || '') +
+    (ort ? '  ·  ' + ort.emoji + ' ' + ort.name : '');
+  document.getElementById('detailNotiz').textContent = item.notiz || '';
+
+  // Status Buttons
+  var btns = document.querySelectorAll('#detailStatusRow .status-btn');
+  for (var j = 0; j < btns.length; j++) {
+    if (btns[j].getAttribute('data-status') === item.status) {
+      btns[j].classList.add('selected');
+    } else {
+      btns[j].classList.remove('selected');
+    }
+  }
+
+  document.getElementById('modalDetail').classList.add('open');
+}
+
+function schliessDetail(e) {
+  if (e && e.target !== document.getElementById('modalDetail')) return;
+  document.getElementById('modalDetail').classList.remove('open');
+  aktivesItemId = null;
+}
+
+function setzeStatus(status) {
+  if (!aktivesItemId) return;
+  var items = ladeItems();
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].id === aktivesItemId) {
+      items[i].status = items[i].status === status ? null : status; // Toggle
+      break;
+    }
+  }
+  speichereItemsLS(items);
+
+  // Buttons aktualisieren
+  var btns = document.querySelectorAll('#detailStatusRow .status-btn');
+  var neuerStatus = null;
+  for (var j = 0; j < items.length; j++) {
+    if (items[j].id === aktivesItemId) { neuerStatus = items[j].status; break; }
+  }
+  for (var k = 0; k < btns.length; k++) {
+    if (btns[k].getAttribute('data-status') === neuerStatus) {
+      btns[k].classList.add('selected');
+    } else {
+      btns[k].classList.remove('selected');
+    }
+  }
+
+  var label = neuerStatus ? STATUS_EMOJI[neuerStatus] + ' Gespeichert' : 'Entscheidung zurückgesetzt';
+  zeigeToast(label);
+  renderOrte();
+  renderGalerie(aktuelleKategorie);
+}
+
+// ══════════════════════════════════════════════════
+// NEUES ITEM
+// ══════════════════════════════════════════════════
+
+var tempFotoData = null;
+
+function openNeuesItem() {
+  // Ort-Dropdown befüllen
+  var orte = ladeOrte();
+  var sel = document.getElementById('inputOrt');
+  sel.innerHTML = '<option value="">Bitte wählen...</option>';
+  for (var i = 0; i < orte.length; i++) {
+    sel.innerHTML += '<option value="' + orte[i].id + '">' + orte[i].emoji + ' ' + orte[i].name + '</option>';
+  }
+  if (orte.length === 0) {
+    sel.innerHTML = '<option value="">Erst einen Raum anlegen</option>';
+  }
+  // Reset
+  document.getElementById('inputName').value = '';
+  document.getElementById('inputKategorie').value = '';
+  document.getElementById('inputOrt').value = '';
+  document.getElementById('inputNotiz').value = '';
+  document.getElementById('fotoUploadArea').classList.remove('has-foto');
+  document.getElementById('fotoUploadArea').innerHTML =
+    '<div class="upload-icon">📷</div><div class="upload-label">Foto aufnehmen oder auswählen</div>';
+  tempFotoData = null;
+  document.getElementById('modalNeuesItem').classList.add('open');
+}
+
+function schliessNeuesItem(e) {
+  if (e && e.target !== document.getElementById('modalNeuesItem')) return;
+  document.getElementById('modalNeuesItem').classList.remove('open');
+}
+
+function fotoGewaehlt(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    tempFotoData = e.target.result;
+    var area = document.getElementById('fotoUploadArea');
+    area.classList.add('has-foto');
+    area.innerHTML = '<img src="' + tempFotoData + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px;">';
+    // Neues input nochmal anhängen
+    var inp = document.createElement('input');
+    inp.type = 'file'; inp.id = 'fotoInput'; inp.accept = 'image/*';
+    inp.setAttribute('capture', 'environment');
+    inp.style.display = 'none';
+    inp.onchange = fotoGewaehlt;
+    document.body.appendChild(inp);
+  };
+  reader.readAsDataURL(file);
+}
+
+function speichereItem() {
+  var name = document.getElementById('inputName').value.trim();
+  var kat  = document.getElementById('inputKategorie').value;
+  var ort  = document.getElementById('inputOrt').value;
+  if (!name) { zeigeToast('Bitte einen Namen eingeben'); return; }
+  if (!ort)  { zeigeToast('Bitte einen Ort wählen'); return; }
+
+  var items = ladeItems();
+  var neues = {
+    id: 'item_' + Date.now(),
+    name: name,
+    kategorie: kat,
+    ortId: ort,
+    notiz: document.getElementById('inputNotiz').value.trim(),
+    fotoData: tempFotoData || null,
+    status: null,
+    erstellt: new Date().toISOString()
+  };
+  items.push(neues);
+  speichereItemsLS(items);
+  document.getElementById('modalNeuesItem').classList.remove('open');
+  zeigeToast('💛 ' + name + ' gespeichert');
+  renderOrte();
+  renderGalerie(aktuelleKategorie);
+}
+
+// ══════════════════════════════════════════════════
+// NEUER ORT
+// ══════════════════════════════════════════════════
+
+var gewaehltesEmoji = '🚪';
+
+function openNeuerOrt() {
+  document.getElementById('inputOrtName').value = '';
+  gewaehltesEmoji = '🚪';
+  var opts = document.querySelectorAll('.emoji-opt');
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].classList.remove('selected');
+    if (opts[i].getAttribute('data-emoji') === '🚪') opts[i].classList.add('selected');
+  }
+  document.getElementById('modalNeuerOrt').classList.add('open');
+}
+
+function schliessNeuerOrt(e) {
+  if (e && e.target !== document.getElementById('modalNeuerOrt')) return;
+  document.getElementById('modalNeuerOrt').classList.remove('open');
+}
+
+function waehleEmoji(el) {
+  var opts = document.querySelectorAll('.emoji-opt');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
+  el.classList.add('selected');
+  gewaehltesEmoji = el.getAttribute('data-emoji');
+}
+
+function speichereOrt() {
+  var name = document.getElementById('inputOrtName').value.trim();
+  if (!name) { zeigeToast('Bitte einen Namen eingeben'); return; }
+  var orte = ladeOrte();
+  orte.push({ id: 'ort_' + Date.now(), name: name, emoji: gewaehltesEmoji });
+  speichereOrteLS(orte);
+  document.getElementById('modalNeuerOrt').classList.remove('open');
+  zeigeToast('🏠 ' + name + ' angelegt');
+  renderOrte();
+}
+
+// ══════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════
+
+function zeigeToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+
+renderOrte();
+</script>
+</body>
+</html>
