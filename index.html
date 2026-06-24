@@ -612,27 +612,36 @@ function navBC(lv){
 // ═══════════════════ RENDER RÄUME ═══════════════════
 function renderR(){
   var raeume=gR(); var moebel=gM(); var items=gI();
-  var g=document.getElementById('gr-raeume'); g.innerHTML='';
+  var g=document.getElementById('gr-raeume');
+  g.innerHTML='';
+
+  // Leer-Zustand
   if(!raeume.length){
-    var leer=document.createElement('div'); leer.className='leer';
-    leer.style.gridColumn='1/-1';
-    leer.innerHTML='<div class="le">🏠</div><p>Noch keine Räume.<br><strong>Tippe auf +</strong> um zu beginnen.</p>';
+    var leer=document.createElement('div');
+    leer.innerHTML='<div style="font-size:42px;margin-bottom:9px">🏠</div><p style="font-size:13px;line-height:1.7;color:var(--grey)">Noch keine Räume.<br><strong style="color:var(--pink)">Tippe auf +</strong> um zu beginnen.</p>';
+    leer.style.cssText='text-align:center;padding:42px 18px;width:100%;';
+    g.style.display='block';
     g.appendChild(leer);
+  } else {
+    g.style.display='';
+    for(var i=0;i<raeume.length;i++){
+      var r=raeume[i];
+      var mIds=[]; for(var j=0;j<moebel.length;j++) if(moebel[j].rId===r.id) mIds.push(moebel[j].id);
+      var cnt=0; for(var k=0;k<items.length;k++) for(var l=0;l<mIds.length;l++) if(items[k].mId===mIds[l]){cnt++;break;}
+      var d=document.createElement('div'); d.className='nc';
+      d.innerHTML='<div class="nc-e">'+r.emoji+'</div><div class="nc-n">'+r.name+'</div>'+
+        '<div class="nc-s">'+mIds.length+' Möbel · '+cnt+' Stücke</div>';
+      if(cnt) d.innerHTML+='<div class="nc-b">'+cnt+'</div>';
+      d.onclick=(function(rid){return function(){ST.rId=rid;showView('moebel');};})(r.id);
+      g.appendChild(d);
+    }
   }
-  for(var i=0;i<raeume.length;i++){
-    var r=raeume[i];
-    var mIds=[]; for(var j=0;j<moebel.length;j++) if(moebel[j].rId===r.id) mIds.push(moebel[j].id);
-    var cnt=0; for(var k=0;k<items.length;k++) for(var l=0;l<mIds.length;l++) if(items[k].mId===mIds[l]){cnt++;break;}
-    var d=document.createElement('div'); d.className='nc';
-    d.innerHTML='<div class="nc-e">'+r.emoji+'</div><div class="nc-n">'+r.name+'</div>'+
-      '<div class="nc-s">'+mIds.length+' Möbel · '+cnt+' Stücke</div>';
-    if(cnt) d.innerHTML+='<div class="nc-b">'+cnt+'</div>';
-    d.onclick=(function(rid){return function(){ST.rId=rid;showView('moebel');};})(r.id);
-    g.appendChild(d);
-  }
+
+  // Add-Karte immer anhängen
   var a=document.createElement('div'); a.className='nc nc-add';
   a.innerHTML='<div class="ap">+</div><div>Raum hinzufügen</div>';
-  a.onclick=function(){fillRTypSel();openOv('m-raum');}; g.appendChild(a);
+  a.onclick=function(){fillRTypSel();openOv('m-raum');};
+  g.appendChild(a);
 }
 
 // ═══════════════════ RENDER MÖBEL ═══════════════════
@@ -964,23 +973,19 @@ function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.c
 // INIT
 try {
   migrateData();
-  // DIAGNOSE — zeige localStorage-Inhalt kurz an
-  var _diag = document.getElementById('gr-raeume');
-  var _r = gR(); var _m = gM(); var _i = gI();
-  var _info = document.createElement('div');
-  _info.style.cssText = 'grid-column:1/-1;color:var(--grey);font-size:11px;padding:8px;background:#1A1A2E;border-radius:8px;margin-bottom:10px;line-height:1.8';
-  _info.innerHTML = '🔍 Diagnose: Räume='+_r.length+' · Möbel='+_m.length+' · Items='+_i.length+'<br>'+
-    'Keys: '+Object.keys(localStorage).join(', ');
-  _diag.appendChild(_info);
+  var _r=gR(); var _m=gM(); var _i=gI();
+  var _diag=document.createElement('p');
+  _diag.style.cssText='color:#FF2D78;font-size:12px;padding:8px 14px;';
+  _diag.textContent='Diagnose: '+_r.length+' Räume · '+_m.length+' Möbel · '+_i.length+' Items';
+  document.getElementById('gr-raeume').parentNode.insertBefore(_diag, document.getElementById('gr-raeume'));
+  setTimeout(function(){if(_diag.parentNode)_diag.parentNode.removeChild(_diag);},6000);
   renderR();
-  // Diagnose nach 5 Sekunden ausblenden
-  setTimeout(function(){ if(_info.parentNode) _info.parentNode.removeChild(_info); }, 8000);
 } catch(e) {
   document.getElementById('gr-raeume').innerHTML =
-    '<div style="grid-column:1/-1;color:#FF2D78;padding:20px;font-size:13px">'+
-    '⚠️ Fehler: '+e.message+'<br><br>'+
+    '<div style="color:#FF2D78;padding:20px;font-size:13px">'+
+    '⚠️ '+e.message+'<br><br>'+
     '<button onclick="localStorage.clear();location.reload()" style="background:#FF2D78;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:13px;cursor:pointer">'+
-    '🔄 Zurücksetzen & neu starten</button></div>';
+    '🔄 Zurücksetzen</button></div>';
 }
 </script>
 </body>
