@@ -459,11 +459,19 @@ var aIid=null, tFoto=null, aGK='', aGUK='', aIF='';
 
 // ── ROUTING ──
 var TABS=['raeume','galerie','entscheiden','suche','stammdaten'];
+var ALL_VIEWS=['raeume','moebel','items','galerie','entscheiden','suche','stammdaten'];
 function showView(n){
   var i,v;
+  // Alle Views verstecken — inline style überschreibt CSS zuverlässig
+  for(i=0;i<ALL_VIEWS.length;i++){
+    v=document.getElementById('v-'+ALL_VIEWS[i]);
+    if(v) v.style.display='none';
+  }
+  // Ziel-View zeigen
+  v=document.getElementById('v-'+n);
+  if(v) v.style.display='block';
+  // Tabs aktualisieren
   for(i=0;i<TABS.length;i++){
-    v=document.getElementById('v-'+TABS[i]);
-    if(v) v.style.display=(TABS[i]===n?'block':'none');
     v=document.getElementById('tab-'+TABS[i]);
     if(v){v.classList.remove('act');if(TABS[i]===n)v.classList.add('act')}
   }
@@ -875,6 +883,11 @@ function saAddUk(){
 }
 
 // ── INIT ──
+var _iv,_ivi;
+for(_ivi=0;_ivi<ALL_VIEWS.length;_ivi++){
+  _iv=document.getElementById('v-'+ALL_VIEWS[_ivi]);
+  if(_iv) _iv.style.display=(_ivi===0?'block':'none');
+}
 renderR();
 </script>
 </body>
