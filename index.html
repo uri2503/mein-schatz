@@ -94,7 +94,8 @@ body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;min
   z-index:200;align-items:flex-end;justify-content:center}
 .ov.open{display:flex}
 .sh{background:#0F0F0F;border:1px solid var(--border);border-radius:22px 22px 0 0;
-  width:100%;max-width:720px;max-height:92vh;overflow-y:auto;padding-bottom:28px}
+  width:100%;max-width:720px;max-height:92vh;overflow-y:auto;padding-bottom:28px;
+  pointer-events:auto;position:relative;z-index:201}
 .sh-h{width:36px;height:4px;background:rgba(255,45,120,0.3);border-radius:2px;margin:11px auto 0}
 .sh-b{padding:16px 18px 0}
 .sh-t{font-size:18px;font-weight:700;margin-bottom:16px;background:var(--grad);
@@ -282,7 +283,7 @@ body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;min
 
 <!-- MODAL RAUM -->
 <div class="ov" id="m-raum" onclick="closeOv('m-raum',event)">
-  <div class="sh"><div class="sh-h"></div><div class="sh-b">
+  <div class="sh" onclick="stopProp(event)"><div class="sh-h"></div><div class="sh-b">
     <div class="sh-t">🏠 Neuer Raum</div>
     <div class="fg"><label class="fl">Raumtyp</label>
       <select class="fs" id="rtyp" onchange="rTypChg()"><option value="">Bitte wählen...</option></select>
@@ -297,7 +298,7 @@ body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;min
 
 <!-- MODAL MÖBEL -->
 <div class="ov" id="m-moebel" onclick="closeOv('m-moebel',event)">
-  <div class="sh"><div class="sh-h"></div><div class="sh-b">
+  <div class="sh" onclick="stopProp(event)"><div class="sh-h"></div><div class="sh-b">
     <div class="sh-t">🗄️ Neues Möbelstück</div>
     <div class="fg"><label class="fl">Symbol</label>
       <div class="eg" id="ep-moebel">
@@ -325,13 +326,13 @@ body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;min
 
 <!-- MODAL ITEM -->
 <div class="ov" id="m-item" onclick="closeOv('m-item',event)">
-  <div class="sh"><div class="sh-h"></div><div class="sh-b">
+  <div class="sh" onclick="stopProp(event)"><div class="sh-h"></div><div class="sh-b">
     <div class="sh-t">✨ Neues Stück</div>
     <div class="fg"><label class="fl">Foto</label>
       <div class="fa" id="fa" onclick="document.getElementById('fi').click()">
         <div class="fa-ic">📷</div><div class="fa-lb">Foto aufnehmen oder auswählen</div>
       </div>
-      <input type="file" id="fi" accept="image/*" capture="environment" style="display:none" onchange="fotoSel(event)">
+      <input type="file" id="fi" accept="image/*" style="display:none" onchange="fotoSel(event)">
     </div>
     <div class="fg"><label class="fl">Bezeichnung</label>
       <input class="fi" id="in" placeholder="z.B. Rote Seidenbluse...">
@@ -358,7 +359,7 @@ body{background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;min
 
 <!-- MODAL DETAIL -->
 <div class="ov" id="m-detail" onclick="closeOv('m-detail',event)">
-  <div class="sh"><div class="sh-h"></div>
+  <div class="sh" onclick="stopProp(event)"><div class="sh-h"></div>
     <div id="d-fw"></div>
     <div class="sh-b">
       <div style="font-size:19px;font-weight:700;margin-bottom:3px" id="d-n"></div>
@@ -516,7 +517,11 @@ function mkICard(){var d=document.createElement('div');d.className='igrid-item';
 function mkChip(txt,act,fn){var c=document.createElement('div');c.className='ch'+(act?' act':'');c.textContent=txt;c.onclick=fn;return c}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2000)}
 function openOv(id){document.getElementById(id).classList.add('open')}
-function closeOv(id,e){if(e&&e.target!==document.getElementById(id))return;document.getElementById(id).classList.remove('open')}
+function closeOv(id,e){
+  if(e&&e.target.id!==id) return;
+  document.getElementById(id).classList.remove('open');
+}
+function stopProp(e){if(e){e.stopPropagation()}}
 function epSel(gid,el){
   var eps=document.getElementById(gid).getElementsByClassName('ep'),i;
   for(i=0;i<eps.length;i++) eps[i].classList.remove('sel');
@@ -778,7 +783,7 @@ function fotoSel(e){
     img.src=tFoto;img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover';
     fa.appendChild(img);
     var inp=document.createElement('input');inp.type='file';inp.id='fi';inp.accept='image/*';
-    inp.setAttribute('capture','environment');inp.style.display='none';inp.onchange=fotoSel;
+    inp.style.display='none';inp.onchange=fotoSel;
     document.body.appendChild(inp);
   };
   rd.readAsDataURL(f);
